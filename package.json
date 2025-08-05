@@ -1,8 +1,16 @@
 {
+  "name": "assignment_1_saucedemo",
+  "version": "1.0.0",
   "dependencies": {
     "cypress": "^14.5.2"
   },
   "devDependencies": {
     "cypress-real-events": "^1.14.0"
+  },
+  "scripts": {
+    "test": "cypress run",
+    "test:headed": "cypress open",
+    "test:stg": "CYPRESS_ENV=stg cypress run",
+    "test:prod": "CYPRESS_ENV=prod cypress run"
   }
 }

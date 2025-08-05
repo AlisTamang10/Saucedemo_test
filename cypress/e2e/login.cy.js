@@ -1,17 +1,25 @@
- it.only('should login with valid email and password', () => {
- cy.fixture("login").then((userData) => {
-  cy.login(userData.username, userData.password);
-   })
-   cy.url().should('include', '/inventory.html');
-   cy.contains("Products").should("be.visible")
-   cy.get('[data-test="add-to-cart-sauce-labs-backpack"]').click()
-   cy.get('[data-test="remove-sauce-labs-backpack"]').should('have.css','color','rgb(226, 35, 26)')
- })
+import loginPage from '../pages/loginPage';
 
- it('should not login with invalid email and pass' ,() =>{
-    cy.visit('https://www.saucedemo.com/')
-    cy.get('[data-test="username"]').type("seeecret_sacue")
-    cy.get('[data-test="password"]').type("admin")
-    cy.get('[data-test="login-button"]').click();
-    cy.contains("Epic sadface: Username and password do not match any user in this service").should("be.visible")
-  })
+describe('Login Spec', () => {
+  beforeEach(() => {
+    loginPage.visit();
+  });
+
+  it('should login with valid credentials', () => {
+    loginPage.fillUsername('standard_user');
+    loginPage.fillPassword('secret_sauce');
+    loginPage.clickLogin();
+    cy.url().should('include', '/inventory');
+    cy.get('.app_logo').should('be.visible');
+    cy.get('.inventory_item').should('have.length.greaterThan', 0);
+  });
+
+  it('should not login with invalid credentials', () => {
+    loginPage.fillUsername('invalid_user');
+    loginPage.fillPassword('wrong_pass');
+    loginPage.clickLogin();
+    loginPage.assertErrorMessage('Username and password do not match');
+    cy.get('[data-test="login-button"]').should('exist');
+    cy.url().should('eq', Cypress.config().baseUrl + '/');
+  });
+});
